@@ -1,0 +1,150 @@
+
+#body{
+    background-color: #F2F2F2;
+}
+
+#header{
+    background-color: #F2F2F2;
+}
+.mapouter {
+    position: relative;
+    text-align: right;
+    height:100%;
+    width: 100%;
+}
+
+.gmap_canvas {
+    overflow: hidden;
+    background: none !important;
+    height: 100%;
+    width: 100%;
+}
+
+#lives{
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: 25%;
+    margin-right: 5%;
+    height: 50%;
+    width: 50%;
+    background-color: #0A0A0D;
+
+}
+
+#footer{
+
+    background-color: #0d0c0e;
+}
+
+#testimonials{
+
+    background-color: #F2F2F2;
+
+}
+
+#galery{
+
+    background-color: #F2F2F2;
+
+}
+
+#testimonial{
+
+    background-color: #0d0c0e;
+}
+
+
+
+#welcome_video{
+    background-color: #fbfbff;
+    margin-bottom: 2%;
+    
+}
+
+
+.cardsbg{
+
+    background-color: #ffffff;
+}
+
+.container{
+    background-color: #fafafae1;
+}
+
+.cal{
+    background-color: #FFFFFF;
+}
+
+
+#buttondelete{
+
+    padding-left: 300px;
+    padding-right: 125px;
+    margin-bottom: 2px;
+    padding-top: 2px;
+    
+
+}
+
+#button_delete_videos{
+margin-left: 100%;
+}
+
+
+/* #buttondelete i.screen-reader-text:hover {color:#1717FF !important} */
+
+a:hover {
+    color: #c92d2a;
+    text-decoration: none;
+}
+#check{
+    /* padding-right: 350px; */
+    width: 20px;
+    height: 20px;
+    margin-left: 300px; 
+    
+    margin-top: -23px ;
+    /* vertical-align: bottom;
+    position: relative;
+    top: 1px;
+    *overflow: hidden; */
+}
+
+#checkbox_videos{
+    width: 20px;
+    height: 20px;
+    margin-left: 95%; 
+    margin-bottom: 3%;
+}
+
+#checkbox_images{
+    width: 20px;
+    height: 20px;
+    margin-left: 90%; 
+    margin-bottom: 3%;
+}
+
+#delete_images{
+    width: 20px;
+    height: 20px;
+    margin-left: 1180%; 
+    margin-bottom: 3%;
+}
+
+/*   Prueba de Josué*/
+/* .btn-danger{
+    margin-left: 80px;
+    margin-top: 20px;
+} */
+
+#result_found_events{
+    color: #F2F2F2;
+}
+
+#listing-detail-1{
+    background-image: url(../img/contact_wallpaper.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}

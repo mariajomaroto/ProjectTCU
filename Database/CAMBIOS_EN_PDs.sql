@@ -1,0 +1,280 @@
+-- Active: 1660847725723@@127.0.0.1@3306@pacvi
+DELIMITER $$
+USE PacVi $$
+CREATE OR REPLACE PROCEDURE P_VER_PERSONA_CONTRASEÑA
+    (
+        IN P_ID_REGISTRO_PERSONA VARCHAR(30)
+    )
+    BEGIN
+        DECLARE CEDULA VARCHAR(30);
+        SET CEDULA := P_ID_REGISTRO_PERSONA;
+        SELECT
+                ID_REGISTRO_PERSONA,
+                AES_DECRYPT(UNHEX(PASSWORD_PERSONA),"ORPe0YdjNKPOPg7VMKbN")
+            FROM PERSONA 
+        WHERE ID_REGISTRO_PERSONA =CEDULA ;
+    END$$
+DELIMITER;
+
+CALL P_VER_PERSONA_CONTRASEÑA('305240366');
+
+--------------------------------------------------------------------cambios a realizar en BD maria
+
+------------------INSERTAR DATOS EN PERFIL, EN PHP QUITAR LOS NULL                   *USUARIO*
+DELIMITER $$
+USE PacVi $$
+CREATE OR REPLACE PROCEDURE P_INSERTAR_DATOS_PERSONA_USU
+    (
+        -- PERSONA 
+        IN P_ID_REGISTRO_PERSONA VARCHAR(50) ,
+        IN P_NOMBRE VARCHAR(30),
+        IN P_APPELLIDOS VARCHAR(60),
+        IN P_PASSWORD_PERSONA VARCHAR(50),
+        --PERSONA_CONTACTO
+        IN P_EMAIL VARCHAR(50)
+    )
+    BEGIN
+            INSERT INTO PERSONA     
+            (
+                ID_REGISTRO_PERSONA,  
+                NOMBRE, 
+                APPELLIDOS, 
+                FECH_NACIMIENTO, 
+                GENERO,
+                FECHA_REGISTRO,
+                TIPO_PERSONA,
+                PASSWORD_PERSONA
+            )
+            VALUES 
+            (
+                P_ID_REGISTRO_PERSONA, 
+                P_NOMBRE, 
+                P_APPELLIDOS, 
+                NULL, 
+                NULL,
+                CONVERT(CURRENT_TIMESTAMP,DATE),
+                0,
+                HEX(AES_ENCRYPT(P_PASSWORD_PERSONA,"ORPe0YdjNKPOPg7VMKbN"))
+            );
+            INSERT INTO PERSONA_CONTACTO
+            (
+                ID_CONTACTO,
+                EMAIL,
+                TELEFONO,
+                FOTO_PERFIL,
+                ID_REGISTRO_PERSONA
+            )
+            VALUES
+            (
+                NULL,
+                P_EMAIL,
+                NULL,
+                NULL,
+                P_ID_REGISTRO_PERSONA
+            );
+            COMMIT;
+    END$$
+DELIMITER ;
+
+--CALL P_INSERTAR_DATOS_PERSONA_USU('302490378','Veronica','alfaro ','prueba','verogmail.com');
+---------------------------------------ACTUALIZAR PERFIL EN USER
+DELIMITER $$
+USE PacVi $$
+CREATE OR REPLACE PROCEDURE P_ACTUALIZAR_DATOS_PERSONA_USU
+    (
+        IN P_ID_REGISTRO_PERSONA VARCHAR(30),
+        IN P_NOMBRE VARCHAR(30),
+        IN P_APPELLIDOS VARCHAR(60),
+        IN P_FECH_NACIMIENTO DATE,
+        IN P_GENERO VARCHAR(2),
+        --PERSONA_CONTACTO
+        IN P_EMAIL VARCHAR(50),
+        IN P_TELEFONO INT(30)
+    )
+    BEGIN 
+        DECLARE PERSONA_CEDULA VARCHAR(30);
+        SET PERSONA_CEDULA :=P_ID_REGISTRO_PERSONA;
+        UPDATE PERSONA SET 
+            NOMBRE = P_NOMBRE ,
+            APPELLIDOS = P_APPELLIDOS ,
+            FECH_NACIMIENTO = P_FECH_NACIMIENTO ,
+            GENERO = P_GENERO
+        WHERE 
+            ID_REGISTRO_PERSONA = PERSONA_CEDULA;
+
+        UPDATE PERSONA_CONTACTO SET 
+            EMAIL = P_EMAIL ,
+            TELEFONO = P_TELEFONO
+        WHERE 
+            ID_REGISTRO_PERSONA = PERSONA_CEDULA;
+
+        COMMIT;
+    END$$
+DELIMITER;
+
+--CALL P_ACTUALIZAR_DATOS_PERSONA_USU('302490378','Veronica','alfaro ','2002/04/13','F','verogmail.com','85129636');
+
+------------------INSERTAR DATOS EN PERFIL, EN PHP QUITAR LOS NULL                   *ADMIN -> RECORDAR ADMIN PUEDE INSERTAR USUARIO*
+
+DELIMITER $$
+USE PacVi $$
+CREATE OR REPLACE PROCEDURE P_INSERTAR_DATOS_PERSONA_ADMIN
+    (
+        -- PERSONA 
+        IN P_ID_REGISTRO_PERSONA VARCHAR(50) ,
+        IN P_NOMBRE VARCHAR(30),
+        IN P_APPELLIDOS VARCHAR(60),
+        IN P_TIPO_PERSONA CHAR(2),
+        IN P_PASSWORD_PERSONA VARCHAR(50),
+        --PERSONA_CONTACTO
+        IN P_EMAIL VARCHAR(50)
+    )
+    BEGIN
+            INSERT INTO PERSONA     
+            (
+                ID_REGISTRO_PERSONA,  
+                NOMBRE, 
+                APPELLIDOS, 
+                FECH_NACIMIENTO, 
+                GENERO,
+                FECHA_REGISTRO,
+                TIPO_PERSONA,
+                PASSWORD_PERSONA
+            )
+            VALUES 
+            (
+                P_ID_REGISTRO_PERSONA, 
+                P_NOMBRE, 
+                P_APPELLIDOS, 
+                NULL, 
+                NULL,
+                CONVERT(CURRENT_TIMESTAMP,DATE),
+                P_TIPO_PERSONA,
+                HEX(AES_ENCRYPT(P_PASSWORD_PERSONA,"ORPe0YdjNKPOPg7VMKbN"))
+            );
+            INSERT INTO PERSONA_CONTACTO
+            (
+                ID_CONTACTO,
+                EMAIL,
+                TELEFONO,
+                FOTO_PERFIL,
+                ID_REGISTRO_PERSONA
+            )
+            VALUES
+            (
+                NULL,
+                P_EMAIL,
+                NULL,
+                NULL,
+                P_ID_REGISTRO_PERSONA
+            );
+            COMMIT;
+    END$$
+DELIMITER;
+
+--CALL P_INSERTAR_DATOS_PERSONA_ADMIN('30429563','WENDY','GOMEZ','1','Wendy01','wendy@gmail.com');
+
+-----------------ACTUALIZAR PERFIL EN ADMIN
+DELIMITER $$
+USE PacVi $$
+CREATE OR REPLACE PROCEDURE P_ACTUALIZAR_DATOS_PERSONA_ADMIN
+    (
+        IN P_ID_REGISTRO_PERSONA VARCHAR(30),
+        IN P_NOMBRE VARCHAR(30),
+        IN P_APPELLIDOS VARCHAR(60),
+        IN P_FECH_NACIMIENTO DATE,
+        IN P_GENERO VARCHAR(2),
+        IN P_TIPO_PERSONA CHAR(2),
+        --PERSONA_CONTACTO
+        IN P_EMAIL VARCHAR(50),
+        IN P_TELEFONO INT(30)
+    )
+    BEGIN
+        DECLARE PERSONA_CEDULA VARCHAR(30);
+        SET PERSONA_CEDULA :=P_ID_REGISTRO_PERSONA;
+        UPDATE PERSONA SET 
+            NOMBRE = P_NOMBRE ,
+            APPELLIDOS = P_APPELLIDOS ,
+            FECH_NACIMIENTO = P_FECH_NACIMIENTO ,
+            GENERO = P_GENERO,
+            TIPO_PERSONA = P_TIPO_PERSONA
+        WHERE 
+            ID_REGISTRO_PERSONA = PERSONA_CEDULA;
+        UPDATE PERSONA_CONTACTO SET 
+            EMAIL = P_EMAIL ,
+            TELEFONO = P_TELEFONO
+        WHERE 
+            ID_REGISTRO_PERSONA = PERSONA_CEDULA;
+        COMMIT;
+    END$$
+DELIMITER;
+--PRUEBA EXITOSA
+--CALL P_ACTUALIZAR_DATOS_PERSONA_ADMIN('30429563','WENDY','GOMEZ','2002/05/12','F','1','wendy@gmail.com','87459683');
+
+-----------------------------------ACTUALIZAR FOTO DE PERFIL
+
+DELIMITER$$
+USE PacVi$$
+CREATE OR REPLACE PROCEDURE P_ACTUALIZAR_FOTO
+    (
+        IN P_ID_REGISTRO_PERSONA VARCHAR(30),
+        IN P_FOTO VARCHAR(300)
+    )
+    BEGIN 
+    DECLARE PERSONA_CEDULA VARCHAR(30);
+    SET PERSONA_CEDULA := P_ID_REGISTRO_PERSONA;
+
+    UPDATE PERSONA_CONTACTO SET FOTO_PERFIL = P_FOTO 
+        WHERE ID_REGISTRO_PERSONA = PERSONA_CEDULA;
+    END$$
+DELIMITER;
+
+--CALL P_ACTUALIZAR_FOTO('302490378','FOTO_VERONICA');
+
+-----------------------------------ACTUALIZAR CONTRASEÑA
+
+DELIMITER$$
+USE PacVi$$
+CREATE OR REPLACE PROCEDURE P_ACTUALIZAR_PASSWORD
+
+    (
+        IN P_ID_REGISTRO_PERSONA VARCHAR(30),
+        IN P_PASSWORD_PERSONA  VARCHAR(50)
+    )
+    BEGIN 
+    DECLARE PERSONA_CEDULA VARCHAR(30);
+    SET PERSONA_CEDULA := P_ID_REGISTRO_PERSONA;
+
+    UPDATE PERSONA SET PASSWORD_PERSONA = HEX(AES_ENCRYPT(P_PASSWORD_PERSONA,"ORPe0YdjNKPOPg7VMKbN"))
+        WHERE ID_REGISTRO_PERSONA = PERSONA_CEDULA;
+    END$$
+DELIMITER;
+
+--CALL P_ACTUALIZAR_PASSWORD('302490378','MONITO');
+
+---------------------------------------------------------------------------------------EVENTO PARA ELIMINAR ENVIVOS
+/*CADA QUE SE APAGA LA COMPU EL BOTON DEL EVENTO SE APARA*/
+----------------EVENTO 3M
+DELIMITER $$
+USE PacVi $$
+CREATE EVENT BORRADO_ENVIVO
+    ON SCHEDULE EVERY 3 MINUTE STARTS '2022-08-29 18:08:00'
+    ON COMPLETION PRESERVE
+    COMMENT 'SE ELIMINAR EL ENVIVO EN 3M'
+    DO
+    BEGIN
+        CALL P_ELIMINAR_ENVIVO();
+    END $$
+DELIMITER ;
+
+----------------EVENTO 24H
+DELIMITER $$
+USE PacVi $$
+CREATE EVENT IF NOT EXISTS BORRAR_EVENTO
+    ON SCHEDULE EVERY 1 DAY STARTS '2022-08-30 00:00:00'
+    ON COMPLETION PRESERVE
+    DO
+    BEGIN
+        CALL P_ELIMINAR_ENVIVO();
+    END $$
+DELIMITER ;
